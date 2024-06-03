@@ -8,9 +8,9 @@
             <div class="card_face card_face--front">
                 <div class="card_content" :style="{
                     backgroundSize: `${
-            (((920 - 16 * 4) / Math.sqrt(cardsContext.length) - 16) * 3) / 4 /3 }px`,
+            (((1020 - 16 * 4) / Math.sqrt(cardsContext.length) - 16) * 3) / 4 /3 }px`,
                 perpective: `${
-            ((((920 - 16 * 4) / Math.sqrt(cardsContext.length) - 16) * 3) / 4) *2 } px`,
+            ((((1020 - 16 * 4) / Math.sqrt(cardsContext.length) - 16) * 3) / 4) *2 } px`,
                 }">
                 </div>
             </div>
@@ -37,7 +37,11 @@ export default{
             default: function() {
                 return [];
             }
-        }
+        },
+        isFlipping: {
+            type: Boolean,
+            default: false,
+        },
     },
     data() {
         return{
@@ -47,7 +51,7 @@ export default{
     },
     methods: {
         onToggleFlipCard() {
-            if(this.isDisable) return false;
+            if (this.isDisable || this.isFlipping) return false;
             this.isFlipped = !this.isFlipped;
          if(this.isFlipped) this.$emit("onFlip", this.card);
         },
@@ -66,6 +70,7 @@ export default{
     display: inline-block;
     margin-right: 1rem;
     margin-bottom: 1rem;
+
 }
 .card_inner{
     width: 100%;
@@ -74,6 +79,7 @@ export default{
     transform-style: preserve-3d;
     cursor: pointer;
     position: relative;
+
 }
 .card_inner.is-flipped{
     transform: rotateY(-180deg);
@@ -90,12 +96,15 @@ export default{
     border-radius: 1rem;
     padding: 1rem;
     box-shadow: 0 3px 10px 3px rgba(0, 0, 0, 0.2);
+    background-color: rgba(95, 251, 23, .7);
+
 
 }
 .card_face--front .card_content{
     background: url("../assets/images/icon-back.png") no-repeat center center ;
     height: 100%;
     width: 100%;
+
 }
 .card_face--back{
     background-color: var(--light);

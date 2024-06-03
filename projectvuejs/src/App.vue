@@ -1,66 +1,98 @@
 <template>
-  <main-screen v-if="statusMatch === 'default'" @onStart="onHandleBeforeStart($event)"/>
-  <interact-screen v-if="statusMatch === 'match'" :cardsContext="setting.cardsContext" @onFinish="onGetResult" />
-  <result-screen v-if="statusMatch === 'result'" :timer="timer" @onStartAgain="statusMatch = 'default'" />
+  <div>
+    <home-screen v-if="statusMatch === 'home'" @startFruitGame="startFruitGame" @startRockPaperScissorsGame="startRockPaperScissorsGame" />
+    <main-screen v-if="statusMatch === 'default'" @onStart="onHandleBeforeStart($event)" />
+    <interact-screen v-if="statusMatch === 'match'" :cardsContext="setting.cardsContext" @onFinish="onGetResult" />
+    <result-screen v-if="statusMatch === 'result'" :timer="timer" @onStartAgain="resetGame" />
+    <rock-paper-scissors v-if="statusMatch === 'rockPaperScissors'" @finishGame="finishRockPaperScissorsGame" />
+    <audio ref="backgroundMusic" src="soundgame.mp3" type="audio/mp3" loop></audio>
+  </div>
 </template>
 
 <script>
+import HomeScreen from "./components/HomeScreen.vue";
 import MainScreen from "./components/MainScreen.vue";
 import InteractScreen from "./components/InteractScreen.vue";
 import ResultScreen from "./components/ResultScreen.vue";
-
-
-
+import RockPaperScissors from "./components/RockPaperScissors.vue";
 import { shuffled } from "./utils/array";
-import {} from "./utils/array";
+
 export default {
   name: 'App',
   components: {
+    HomeScreen,
     MainScreen,
     InteractScreen,
     ResultScreen,
-    },
-  data(){
-    return{
+    RockPaperScissors,
+  },
+  data() {
+    return {
       setting: {
         totalOfBlocks: 0,
         cardsContext: [],
         startedAt: null,
       },
-      statusMatch: "default", 
-      timer : 0,
+      statusMatch: "home", // Ban đầu hiển thị trang chủ
+      timer: 0,
     };
   },
+  mounted() {
+    this.playBackgroundMusic();
+  },
+  methods: {
+    onHandleBeforeStart(config) {
+      console.log("running handle before start, ", config);
+      this.setting.totalOfBlocks = config.totalOfBlocks;
 
-    methods:{
-      onHandleBeforeStart(config) {
-        console.log("running handle before start, ", config);
-        this.setting.totalOfBlocks = config.totalOfBlocks;
+      const firstCards = Array.from({ length: this.setting.totalOfBlocks / 2 }, (_, i) => i + 1);
+      const secondCards = [...firstCards];
+      const cards = [...firstCards, ...secondCards];
+      
+      this.setting.cardsContext = shuffled(cards);
 
-        const firstCards = Array.from({ length: this.setting.totalOfBlocks / 2 }, 
-        (_, i) => i + 1
-      );
-       const secondCards = [...firstCards];
-       const cards = [...firstCards, ...secondCards];
-       
-       this.setting.cardsContext = shuffled(shuffled(shuffled(shuffled(cards))));
+      this.setting.startedAt = new Date().getTime();
 
-       this.setting.startedAt = new Date().getTime();
+      // Play background music
+      this.playBackgroundMusic();
 
-
-
-        //data ready
-        this.statusMatch = "match";
-      },
-      onGetResult(){
-        //get timer
-        this.timer = new Date().getTime() - this.setting.startedAt;
-        //switch to result compoment
-        this.statusMatch = "result";
-      },
+      // data ready
+      this.statusMatch = "match";
     },
+    onGetResult() {
+      // get timer
+      this.timer = new Date().getTime() - this.setting.startedAt;
+      // switch to result component
+      this.statusMatch = "result";
+    },
+    playBackgroundMusic() {
+      const music = this.$refs.backgroundMusic;
+      if (music) {
+        music.play().catch(error => {
+          console.log('Auto-play was prevented:', error);
+          window.addEventListener('click', () => {
+            music.play();
+          }, { once: true });
+        });
+      }
+    },
+    resetGame() {
+      this.statusMatch = "default";
+      this.timer = 0;
+    },
+    startFruitGame() {
+      this.statusMatch = "default"; // Chuyển sang trò chơi Card Fruit
+    },
+    startRockPaperScissorsGame() {
+      this.statusMatch = "rockPaperScissors"; // Chuyển sang trò chơi Rock Paper Scissors
+    },
+    finishRockPaperScissorsGame() {
+      this.statusMatch = "home"; // Quay lại trang chủ sau khi kết thúc trò chơi Kéo Búa Bao
+    }
+  },
 };
 </script>
+
 
 <style>
 

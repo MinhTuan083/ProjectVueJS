@@ -26,6 +26,9 @@ export default{
         onStart(totalOfBlocks) {
             this.$emit("onStart", { totalOfBlocks });
         },
+        playBackgroundMusic() {
+      this.$refs.backgroundMusic.play();
+    },
     },
 };
 </script>
@@ -89,5 +92,6 @@ export default{
 .actions button:hover {
   background-color: var(--light);
   color: var(--dark);
+  transform: scale(1.2);
 }
 </style>
