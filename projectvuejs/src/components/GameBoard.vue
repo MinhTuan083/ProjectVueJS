@@ -27,6 +27,19 @@
       <button @click="exitGame">Yes</button>
       <button @click="cancelExit">No</button>
     </div>
+    <div class="controls">
+    <button v-if="!isPaused" @click="pauseGame">⏸</button>
+    <button v-if="isPaused" @click="confirmResumeGame">▶️</button>
+  </div>
+  <div v-if="countdown > 0" class="countdown">{{ countdown }}</div>
+  <div v-if="showResumeConfirm" class="resume-confirm">
+    <p>Bạn có muốn tiếp tục trò chơi?</p>
+    <button @click="resumeGame">Yes</button>
+    <button @click="cancelResume">No</button>
+  </div>
+  <div v-if="isPaused" class="lock-overlay">
+    <div class="lock-icon">🔒</div>
+  </div>
   </div>
 </template>
 
@@ -44,6 +57,9 @@ export default {
       borderStyle: {},
       colors: ['red', 'green', 'blue', 'yellow', 'purple', 'orange'],
       colorIndex: 0,
+      isPaused: false,
+      countdown: 0,
+      showResumeConfirm: false,
     };
   },
   mounted() {
@@ -51,9 +67,9 @@ export default {
   },
   methods: {
     makeMove(row, col) {
-      if (!this.board[row][col] && !this.winner && this.currentPlayer === 'X') {
+      if (!this.board[row][col] && !this.winner && this.currentPlayer === 'X'&& !this.isPaused) {
         this.board[row][col] = this.currentPlayer;
-        if (this.checkWin(row, col)) {
+        if (this.checkWin(row, col)) {  
           this.winner = this.currentPlayer;
           setTimeout(() => {
             alert(`${this.winner} thắng!`);
@@ -63,6 +79,30 @@ export default {
           this.currentPlayer = 'O';
           setTimeout(this.computerMove, 500);
         }
+      }
+    },
+    pauseGame() {
+      this.isPaused = true;
+    },
+    confirmResumeGame() {
+      this.showResumeConfirm = true;
+    },
+    cancelResume() {
+      this.showResumeConfirm = false;
+    },
+    resumeGame() {
+      this.showResumeConfirm = false;
+      this.countdown = 3;
+      this.countdownTimer();
+    },
+    countdownTimer() {
+      if (this.countdown > 0) {
+        setTimeout(() => {
+          this.countdown--;
+          this.countdownTimer();
+        }, 1000);
+      } else {
+        this.isPaused = false;
       }
     },
     computerMove() {
@@ -248,7 +288,7 @@ export default {
       }
 
       return false;
-    },
+    }, 
     isWinningCell(row, col) {
       return this.winningCells.some(cell => cell.row === row && cell.col === col);
     },
@@ -378,7 +418,56 @@ h1 {
   user-select: none;
   color: white;
 }
+.controls {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+.controls button {
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  outline: none;
+}
 
+.countdown {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 48px;
+  color: white;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 20px;
+  border-radius: 10px;
+}
+
+.resume-confirm {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  z-index: 200;
+}
+
+.resume-confirm p {
+  margin-bottom: 20px;
+}
+
+.resume-confirm button {
+  margin: 0 10px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
 .dropdown-menu {
   position: absolute;
   top: 30px;
