@@ -283,7 +283,7 @@ export default {
           borderImage: `linear-gradient(90deg, ${this.colors[this.colorIndex]}, ${this.colors[(this.colorIndex + 1) % this.colors.length]}) 1`,
           animation: 'border-animate 5s linear infinite'
         };
-      }, 5000); // Đổi màu sau mỗi 5 giây
+      }, 3000); // Đổi màu sau mỗi 5 giây
     }
   }
 };
