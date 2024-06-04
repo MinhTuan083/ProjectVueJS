@@ -41,6 +41,7 @@
 .screen h1 {
   font-size: 4.5rem;
   text-transform: uppercase;
+  color:rgb(255, 221, 0);
 }
 
 .screen p {

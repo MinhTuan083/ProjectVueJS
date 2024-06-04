@@ -1,10 +1,10 @@
 <template>
   <div>
-    <home-screen v-if="statusMatch === 'home'" @startFruitGame="startFruitGame" @startRockPaperScissorsGame="startRockPaperScissorsGame" />
+    <home-screen v-if="statusMatch === 'home'" @startFruitGame="startFruitGame" @startNumberGame="startNumberGame" />
     <main-screen v-if="statusMatch === 'default'" @onStart="onHandleBeforeStart($event)" />
     <interact-screen v-if="statusMatch === 'match'" :cardsContext="setting.cardsContext" @onFinish="onGetResult" />
     <result-screen v-if="statusMatch === 'result'" :timer="timer" @onStartAgain="resetGame" />
-    <rock-paper-scissors v-if="statusMatch === 'rockPaperScissors'" @finishGame="finishRockPaperScissorsGame" />
+    <number-screen v-if="statusMatch === 'number2048'"  />
     <audio ref="backgroundMusic" src="soundgame.mp3" type="audio/mp3" loop></audio>
   </div>
 </template>
@@ -14,7 +14,7 @@ import HomeScreen from "./components/HomeScreen.vue";
 import MainScreen from "./components/MainScreen.vue";
 import InteractScreen from "./components/InteractScreen.vue";
 import ResultScreen from "./components/ResultScreen.vue";
-import RockPaperScissors from "./components/RockPaperScissors.vue";
+import NumberScreen from "./components/NumberScreen.vue";
 import { shuffled } from "./utils/array";
 
 export default {
@@ -24,7 +24,7 @@ export default {
     MainScreen,
     InteractScreen,
     ResultScreen,
-    RockPaperScissors,
+    NumberScreen,
   },
   data() {
     return {
@@ -83,10 +83,10 @@ export default {
     startFruitGame() {
       this.statusMatch = "default"; // Chuyển sang trò chơi Card Fruit
     },
-    startRockPaperScissorsGame() {
-      this.statusMatch = "rockPaperScissors"; // Chuyển sang trò chơi Rock Paper Scissors
+    startNumberGame() {
+      this.statusMatch = "number2048"; // Chuyển sang trò chơi 2048
     },
-    finishRockPaperScissorsGame() {
+    finishNumberGame() {
       this.statusMatch = "home"; // Quay lại trang chủ sau khi kết thúc trò chơi Kéo Búa Bao
     }
   },
