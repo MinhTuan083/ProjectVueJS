@@ -4,7 +4,7 @@
       ☰
       <div class="dropdown-menu" v-if="showMenu">
         <div class="dropdown-item" @click="openSettings">Cài đặt</div>
-        <div class="dropdown-item" @click="confirmExit">Thoát trò chơi</div>
+        <div class="dropdown-item" @click="confirmExitGame">Thoát trò chơi</div>
       </div>
     </div>
     <h1>Go Caro</h1>
@@ -22,24 +22,24 @@
       </div>
     </div>
     <p v-if="winner">Winner: {{ winner }}</p>
+    <div class="controls">
+      <button v-if="!isPaused" @click="pauseGame">⏸</button>
+      <button v-if="isPaused" @click="confirmResumeGame">▶️</button>
+    </div>
+    <div v-if="countdown > 0" class="countdown">{{ countdown }}</div>
+    <div v-if="showResumeConfirm" class="resume-confirm">
+      <p>Bạn có muốn tiếp tục trò chơi?</p>
+      <button @click="resumeGame">Yes</button>
+      <button @click="cancelResume">No</button>
+    </div>
     <div v-if="showExitConfirm" class="exit-confirm">
       <p>Bạn có muốn thoát trò chơi?</p>
-      <button @click="exitGame">Yes</button>
+      <button @click="exitGameConfirmed">Yes</button>
       <button @click="cancelExit">No</button>
     </div>
-    <div class="controls">
-    <button v-if="!isPaused" @click="pauseGame">⏸</button>
-    <button v-if="isPaused" @click="confirmResumeGame">▶️</button>
-  </div>
-  <div v-if="countdown > 0" class="countdown">{{ countdown }}</div>
-  <div v-if="showResumeConfirm" class="resume-confirm">
-    <p>Bạn có muốn tiếp tục trò chơi?</p>
-    <button @click="resumeGame">Yes</button>
-    <button @click="cancelResume">No</button>
-  </div>
-  <div v-if="isPaused" class="lock-overlay">
-    <div class="lock-icon">🔒</div>
-  </div>
+    <div v-if="isPaused" class="lock-overlay">
+      <div class="lock-icon">🔒</div>
+    </div>
   </div>
 </template>
 
@@ -59,7 +59,7 @@ export default {
       colorIndex: 0,
       isPaused: false,
       countdown: 0,
-      showResumeConfirm: false,
+    showResumeConfirm: false,
     };
   },
   mounted() {
@@ -292,21 +292,16 @@ export default {
     isWinningCell(row, col) {
       return this.winningCells.some(cell => cell.row === row && cell.col === col);
     },
-    goHome() {
-      this.$emit('toggleOtherGames', true); // Hiển thị thông tin game khác khi quay về trang chủ
-      this.$router.push({ name: 'HomeBoard' });
-    },
-    confirmExit() {
-      this.showExitConfirm = true;
-      this.showMenu = false;
-    },
-    exitGame() {
-      this.$emit('toggleOtherGames', true); // Hiển thị thông tin game khác khi quay về trang chủ
-      this.$router.push({ name: 'HomeBoard' });
-    },
-    cancelExit() {
-      this.showExitConfirm = false;
-    },
+
+    confirmExitGame() {
+    this.showExitConfirm = true;
+    this.pauseGame(); // Pause the game when exit confirmation is shown
+  },
+  cancelExit() {
+    this.showExitConfirm = false;
+    this.resumeGame(); // Resume the game if exit is canceled
+  },
+  
     openSettings() {
       alert("Cài đặt sẽ được thêm sau!");
     },
@@ -337,7 +332,7 @@ export default {
   justify-content: center;
   height: 100vh;
   overflow: hidden;
-  background-image: url('@/assets/image/bgrgame.jpg'); /* Path to your background image */
+  background-image: url('@/assets/images/bgrgame.jpg'); /* Path to your background image */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

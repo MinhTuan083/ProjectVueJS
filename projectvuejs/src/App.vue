@@ -1,65 +1,45 @@
-<<<<<<< HEAD
-
-    
-    <template>
+<template>
   <div id="app">
     <div v-if="showOtherGames" class="other-games">
-      <main-screen
-        v-if="statusMatch === 'default'"
-        @onStart="onHandleBeforeStart($event)"
-      />
-      <interact-screen v-if="statusMatch === 'match'" />
-      <router-view
-        v-if="statusMatch !== 'default' && statusMatch !== 'match'"
-      />
-
       <img src="/path/to/other-game-info.png" alt="Other Games Info" />
     </div>
     <router-view @toggleOtherGames="toggleOtherGames" />
-=======
-<template>
-  <div>
-    <home-screen v-if="statusMatch === 'home'" @startFruitGame="startFruitGame" @startNumberGame="startNumberGame" />
-    <main-screen v-if="statusMatch === 'default'" @onStart="onHandleBeforeStart($event)" />
-    <interact-screen v-if="statusMatch === 'match'" :cardsContext="setting.cardsContext" @onFinish="onGetResult" />
-    <result-screen v-if="statusMatch === 'result'" :timer="timer" @onStartAgain="resetGame" />
-    <number-screen v-if="statusMatch === 'number2048'"  />
-    <audio ref="backgroundMusic" src="soundgame.mp3" type="audio/mp3" loop></audio>
->>>>>>> MinhTuan
+    <div>
+      <home-screen v-if="statusMatch === 'home'" @startFruitGame="startFruitGame" @startNumberGame="startNumberGame" @startCaroGame="startCaroGame"/>
+      <main-screen v-if="statusMatch === 'default'" @onStart="onHandleBeforeStart($event)" />
+      <interact-screen v-if="statusMatch === 'match'" :cardsContext="setting.cardsContext" @onFinish="onGetResult" />
+      <result-screen v-if="statusMatch === 'result'" :timer="timer" @onStartAgain="resetGame" />
+      <number-screen v-if="statusMatch === 'number2048'" />
+      <home-board v-if="statusMatch === 'caro'" @startGame="startGame"/>
+      <game-board v-if="statusMatch === 'playcaro'" @exitGameConfirmed="exitGameConfirmed" />
+      <audio ref="backgroundMusic" src="soundgame.mp3" type="audio/mp3" loop></audio>
+    </div>
   </div>
+
 </template>
-  
+
 
 
 <script>
 import HomeScreen from "./components/HomeScreen.vue";
 import MainScreen from "./components/MainScreen.vue";
 import InteractScreen from "./components/InteractScreen.vue";
-<<<<<<< HEAD
-
-export default {
-  name: "App",
-  data() {
-    return {
-      statusMatch: "default",
-    };
-  },
-=======
 import ResultScreen from "./components/ResultScreen.vue";
 import NumberScreen from "./components/NumberScreen.vue";
 import { shuffled } from "./utils/array";
+import HomeBoard from "./components/HomeBoard.vue";
+import GameBoard from "./components/GameBoard.vue";
 
 export default {
   name: 'App',
->>>>>>> MinhTuan
   components: {
     HomeScreen,
     MainScreen,
     InteractScreen,
-<<<<<<< HEAD
-=======
     ResultScreen,
     NumberScreen,
+    HomeBoard,
+    GameBoard,
   },
   data() {
     return {
@@ -74,21 +54,17 @@ export default {
   },
   mounted() {
     this.playBackgroundMusic();
->>>>>>> MinhTuan
   },
   methods: {
     onHandleBeforeStart(config) {
       console.log("running handle before start, ", config);
-<<<<<<< HEAD
       this.statusMatch = "match";
-    },
-=======
       this.setting.totalOfBlocks = config.totalOfBlocks;
 
       const firstCards = Array.from({ length: this.setting.totalOfBlocks / 2 }, (_, i) => i + 1);
       const secondCards = [...firstCards];
       const cards = [...firstCards, ...secondCards];
-      
+
       this.setting.cardsContext = shuffled(cards);
 
       this.setting.startedAt = new Date().getTime();
@@ -98,7 +74,12 @@ export default {
 
       // data ready
       this.statusMatch = "match";
+      
     },
+    exitGame() {
+    this.statusMatch = "home"; // Switch back to the home screen
+    this.showOtherGames = true; // Show other games info
+  },
     onGetResult() {
       // get timer
       this.timer = new Date().getTime() - this.setting.startedAt;
@@ -126,11 +107,20 @@ export default {
     startNumberGame() {
       this.statusMatch = "number2048"; // Chuyển sang trò chơi 2048
     },
+    startCaroGame() {
+      this.statusMatch = "caro"; // Chuyển sang trò chơi 2048
+    },
     finishNumberGame() {
       this.statusMatch = "home"; // Quay lại trang chủ sau khi kết thúc trò chơi Kéo Búa Bao
-    }
->>>>>>> MinhTuan
+    },
+    startGame() {
+      this.statusMatch = "playcaro"; // Chuyển sang màn hình GameBoard khi bắt đầu trò chơi Caro
+    },
+    exitGameConfirmed() {
+      this.$emit('home'); // Emitting an event to the parent component
+  }
   },
+
 };
 </script>
 

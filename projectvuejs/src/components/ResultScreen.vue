@@ -51,7 +51,6 @@
 .screen button{
     padding: 20px;
     margin-top: 20px;
-    background: transparent;
   font: var(--font);
   background: transparent;
   box-shadow: none;

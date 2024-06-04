@@ -3,7 +3,7 @@
     <h1>Cờ Caro</h1>
     <button @click="startGameWithBot" @mouseover="hover = true" @mouseleave="hover = false" class="hover-button">
       Đánh với máy
-      <img v-if="hover" src="@/assets/image/ronaldo.png" alt="Hover Image" class="hover-image">
+      <img v-if="hover" src="@/assets/images/ronaldo.png" alt="Hover Image" class="hover-image">
     </button>
   </div>
 </template>
@@ -17,8 +17,7 @@ export default {
   },
   methods: {
     startGameWithBot() {
-      this.$router.push({ name: 'GameBoard' });
-    }
+      this.$emit('startGame');    }
   }
 };
 </script>
@@ -30,7 +29,7 @@ export default {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-image: url('@/assets/image/bgr.jpg'); /* Path to your background image */
+  background-image: url('@/assets/images/bgr.jpg'); /* Path to your background image */
   background-size: cover;
   background-position: center;
   
